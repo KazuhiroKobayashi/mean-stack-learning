@@ -10,7 +10,6 @@
         placeholder="Title"
         #title="ngModel"
       />
-      <!-- Not using local references -->
       <mat-error *ngIf="title.invalid">Please enter a post title.</mat-error>
     </mat-form-field>
     <mat-form-field>
@@ -22,7 +21,6 @@
         placeholder="Content"
         #content="ngModel"
       ></textarea>
-      <!-- Using local references -->
       <mat-error *ngIf="content.invalid"
         >Please enter a post content.</mat-error
       >

@@ -3,6 +3,10 @@
     <mat-expansion-panel-header [innerText]="post.title">
     </mat-expansion-panel-header>
     <p [innerText]="post.content"></p>
+    <mat-action-row>
+      <button mat-button color="primary">Edit</button>
+      <button mat-button color="warn">Delete</button>
+    </mat-action-row>
   </mat-expansion-panel>
 </mat-accordion>
-<p *ngIf="posts.length <= 0">No posts added yet.</p>
+<p class="info" *ngIf="posts.length <= 0">No posts added yet.</p>
