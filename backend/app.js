@@ -1,22 +1,30 @@
+const fs = require("fs");
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
 const Post = require("./models/post");
 
-const app = express();
+const getDB = (file) => {
+  try {
+    const config = JSON.parse(fs.readFileSync(file, "utf-8"));
+    return config.database.url;
+  } catch (e) {
+    console.log(e.message);
+  }
+};
+const url = getDB("./app.config");
 
 mongoose
-  .connect(
-    "",
-    { useNewUrlParser: true, useUnifiedTopology: true }
-    )
+  .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log("Connected to database.");
   })
   .catch(() => {
     console.log("Connection failed.");
   });
+
+const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
