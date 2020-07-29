@@ -1,8 +1,12 @@
-:host{
-    display: block;
-    margin-top: 1rem;
+:host {
+  display: block;
+  margin-top: 1rem;
 
-    p.info{
-        text-align: center;
-    }
+  mat-spinner {
+    margin: auto;
+  }
+
+  p.info {
+    text-align: center;
+  }
 }

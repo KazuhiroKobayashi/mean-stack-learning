@@ -14,6 +14,7 @@ export class PostCreateComponent implements OnInit {
   private mode = 'create';
   private postId: string;
   post: Post;
+  isLoading = false;
 
   constructor(public postService: PostService, public route: ActivatedRoute) {}
 
@@ -22,12 +23,14 @@ export class PostCreateComponent implements OnInit {
       if (paramMap.has('postId')) {
         this.mode = 'edit';
         this.postId = paramMap.get('postId');
+        this.isLoading = true;
         this.postService.getPost(this.postId).subscribe((post) => {
           this.post = {
             id: post._id,
             title: post.title,
             content: post.content,
           };
+          this.isLoading = false;
         });
       } else {
         this.mode = 'create';
@@ -40,6 +43,7 @@ export class PostCreateComponent implements OnInit {
     if (form.invalid) {
       return;
     }
+    this.isLoading = true;
     if (this.mode === 'create') {
       this.postService.addPost(form.value.title, form.value.content);
     } else {
