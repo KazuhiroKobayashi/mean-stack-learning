@@ -13,7 +13,7 @@ import { Post } from '../post.model';
 export class PostCreateComponent implements OnInit {
   private mode = 'create';
   private postId: string;
-  post: Post = { id: '', title: '', content: '' };
+  post: Post;
 
   constructor(public postService: PostService, public route: ActivatedRoute) {}
 
@@ -22,7 +22,13 @@ export class PostCreateComponent implements OnInit {
       if (paramMap.has('postId')) {
         this.mode = 'edit';
         this.postId = paramMap.get('postId');
-        this.post = this.postService.getPost(this.postId);
+        this.postService.getPost(this.postId).subscribe((post) => {
+          this.post = {
+            id: post._id,
+            title: post.title,
+            content: post.content,
+          };
+        });
       } else {
         this.mode = 'create';
         this.postId = null;

@@ -41,8 +41,12 @@ export class PostService {
     return this.postUpdated.asObservable();
   }
 
-  getPost(id: string): Post {
-    return { ...this.posts.find((post) => post.id === id) };
+  getPost(
+    id: string
+  ): Observable<{ _id: string; title: string; content: string }> {
+    return this.http.get<{ _id: string; title: string; content: string }>(
+      'http://localhost:3000/api/posts/' + id
+    );
   }
 
   addPost(title: string, content: string): void {
