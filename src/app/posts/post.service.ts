@@ -4,7 +4,6 @@ import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Post } from './post.model';
-import { stringify } from '@angular/compiler/src/util';
 
 @Injectable({
   providedIn: 'root',
@@ -42,13 +41,33 @@ export class PostService {
     return this.postUpdated.asObservable();
   }
 
+  getPost(id: string): Post {
+    return { ...this.posts.find((post) => post.id === id) };
+  }
+
   addPost(title: string, content: string): void {
     const post: Post = { id: '', title, content };
     this.http
-      .post<{ message: string }>('http://localhost:3000/api/posts', post)
+      .post<{ message: string; postId: string }>(
+        'http://localhost:3000/api/posts',
+        post
+      )
       .subscribe((responseData) => {
-        console.log(responseData.message);
+        post.id = responseData.postId;
         this.posts.push(post);
+        this.postUpdated.next([...this.posts]);
+      });
+  }
+
+  updatePost(id: string, title: string, content: string): void {
+    const updatedPost: Post = { id, title, content };
+    this.http
+      .put('http://localhost:3000/api/posts/' + updatedPost.id, updatedPost)
+      .subscribe((response) => {
+        const postIndex = this.posts.findIndex(
+          (post) => post.id === updatedPost.id
+        );
+        this.posts[postIndex] = updatedPost;
         this.postUpdated.next([...this.posts]);
       });
   }
