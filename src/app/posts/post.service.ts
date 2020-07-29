@@ -80,7 +80,6 @@ export class PostService {
     this.http
       .delete<{ message: string }>('http://localhost:3000/api/posts/' + postId)
       .subscribe((responseData) => {
-        console.log(responseData.message);
         const updatedPosts = this.posts.filter((post) => post.id !== postId);
         this.posts = updatedPosts;
         this.postUpdated.next([...this.posts]);
