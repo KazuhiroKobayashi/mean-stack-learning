@@ -4,6 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { PostService } from '../post.service';
 import { Post } from '../post.model';
+import { mimeType } from './mime-type.validator';
 
 @Component({
   selector: 'app-post-create',
@@ -25,11 +26,12 @@ export class PostCreateComponent implements OnInit {
       title: new FormControl(null, {
         validators: [Validators.required, Validators.minLength(3)],
       }),
-      image: new FormControl(null, {
-        validators: [Validators.required],
-      }),
       content: new FormControl(null, {
         validators: [Validators.required],
+      }),
+      image: new FormControl(null, {
+        validators: [Validators.required],
+        asyncValidators: [mimeType],
       }),
     });
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
@@ -37,11 +39,12 @@ export class PostCreateComponent implements OnInit {
         this.mode = 'edit';
         this.postId = paramMap.get('postId');
         this.isLoading = true;
-        this.postService.getPost(this.postId).subscribe((post) => {
+        this.postService.getPost(this.postId).subscribe((postData) => {
           this.post = {
-            id: post._id,
-            title: post.title,
-            content: post.content,
+            id: postData._id,
+            title: postData.title,
+            content: postData.content,
+            imagePath: null,
           };
           this.form.setValue({
             title: this.post.title,
@@ -73,7 +76,11 @@ export class PostCreateComponent implements OnInit {
     }
     this.isLoading = true;
     if (this.mode === 'create') {
-      this.postService.addPost(this.form.value.title, this.form.value.content);
+      this.postService.addPost(
+        this.form.value.title,
+        this.form.value.content,
+        this.form.value.image
+      );
     } else {
       this.postService.updatePost(
         this.postId,

@@ -2,6 +2,7 @@
 
 # Users
 app.config
+/backend/images/*
 
 # compiled output
 /dist
