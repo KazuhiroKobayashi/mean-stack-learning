@@ -50,10 +50,18 @@ export class PostService {
 
   getPost(
     id: string
-  ): Observable<{ _id: string; title: string; content: string }> {
-    return this.http.get<{ _id: string; title: string; content: string }>(
-      'http://localhost:3000/api/posts/' + id
-    );
+  ): Observable<{
+    _id: string;
+    title: string;
+    content: string;
+    imagePath: string;
+  }> {
+    return this.http.get<{
+      _id: string;
+      title: string;
+      content: string;
+      imagePath: string;
+    }>('http://localhost:3000/api/posts/' + id);
   }
 
   addPost(title: string, content: string, image: File): void {
@@ -79,14 +87,37 @@ export class PostService {
       });
   }
 
-  updatePost(id: string, title: string, content: string): void {
-    const updatedPost: Post = { id, title, content, imagePath: null };
+  updatePost(
+    id: string,
+    title: string,
+    content: string,
+    image: File | string
+  ): void {
+    let postData: FormData | Post;
+    if (typeof image === 'object') {
+      postData = new FormData();
+      postData.append('id', id);
+      postData.append('title', title);
+      postData.append('content', content);
+      postData.append('image', image, title);
+    } else {
+      postData = {
+        id,
+        title,
+        content,
+        imagePath: image,
+      };
+    }
     this.http
-      .put('http://localhost:3000/api/posts/' + updatedPost.id, updatedPost)
+      .put('http://localhost:3000/api/posts/' + id, postData)
       .subscribe((response) => {
-        const postIndex = this.posts.findIndex(
-          (post) => post.id === updatedPost.id
-        );
+        const postIndex = this.posts.findIndex((post) => post.id === id);
+        const updatedPost: Post = {
+          id,
+          title,
+          content,
+          imagePath: '',
+        };
         this.posts[postIndex] = updatedPost;
         this.postUpdated.next([...this.posts]);
         this.router.navigate(['/']);
