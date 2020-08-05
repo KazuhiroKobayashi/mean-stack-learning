@@ -1,4 +1,3 @@
-const fs = require("fs");
 const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -9,18 +8,11 @@ const userRoutes = require("./routes/user");
 
 const app = express();
 
-const getDB = (file) => {
-  try {
-    const config = JSON.parse(fs.readFileSync(file, "utf-8"));
-    return config.database.url;
-  } catch (e) {
-    console.log(e.message);
-  }
-};
-const url = getDB("./app.config");
-
 mongoose
-  .connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(process.env.MONGO_ATLAS_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
     console.log("Connected to database.");
   })
